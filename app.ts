@@ -26,6 +26,8 @@ class Wallet {
     earningsAhrk:number;
     earningsAeur:number;
 
+    selectedCurrency:string;
+
     constructor() { 
         this.address = Cookies.get("address");
         this.seed = Cookies.get("seed");
@@ -41,6 +43,8 @@ class Wallet {
         this.earningsWaves = 0;
         this.earningsAhrk = 0;
         this.earningsAeur = 0;
+
+        this.selectedCurrency = ANOTE;
     }
 
     getPage():string {
@@ -193,7 +197,7 @@ class Wallet {
     }
 
     updateAmount() {
-        var currency = '';
+        var currency = this.selectedCurrency;
 
         var amount = 0;
         var dp = this.getDecimalPlaces(String(currency));
@@ -402,7 +406,7 @@ class Wallet {
     }
 
     async send() {
-        var currency = '';
+        var currency = this.selectedCurrency;
         var decimalPlaces = this.getDecimalPlaces(String(currency));
         var fee = this.getFee(String(currency));
         var feeCurrency = '';
@@ -830,7 +834,7 @@ class Wallet {
 const AHRK = "Gvs59WEEXVAQiRZwisUosG7fVNr8vnzS8mjkgqotrERT";
 const AEUR = "Az4MsPQZn9RJm8adcya5RuztQ49rMGUW99Ebj56triWr";
 const AINT = "4PVEMfdqhwzpLAQjqgQ1Sys9agqBxtP8QEnAthSrLPfF";
-const ANOTE = "4zbprK67hsa732oSGLB6HzE8Yfdj3BcTcehCeTA1G5Lf";
+const ANOTE = "";
 
 const AHRKDEC = 1000000;
 const SATINBTC = 100000000;
@@ -1091,6 +1095,18 @@ $("#buttonSeedCopy").on( "click", function() {
             $("#buttonSeedCopy").prop('disabled', true);
         }, 500);
     });
+});
+
+$("#anoteButton").on( "click", function() {
+    wallet.selectedCurrency = ANOTE;
+    $("#dropdownMenuButton1").html("ANOTE");
+    wallet.updateAmount();
+});
+
+$("#aintButton").on( "click", function() {
+    wallet.selectedCurrency = AINT;
+    $("#dropdownMenuButton1").html("AINT");
+    wallet.updateAmount();
 });
 
 function createTranslation() {
