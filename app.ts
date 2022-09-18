@@ -410,13 +410,6 @@ class Wallet {
         var decimalPlaces = this.getDecimalPlaces(String(currency));
         var fee = this.getFee(String(currency));
         var feeCurrency = '';
-        if (currency == AINT) {
-            if (t.lang == "hr") {
-                feeCurrency = AHRK;
-            } else if (t.lang == "en") {
-                feeCurrency = AEUR;
-            }
-        }
         var recipient = $("#addressRec").val()?.toString();
         var a = $("#amount").val();
         if (a && recipient) {
@@ -428,14 +421,18 @@ class Wallet {
                 }
 
                 var amount: number = +a;
-                await this.signer.transfer({
+                var transferOpts = {
                     amount: Math.floor(amount * decimalPlaces),
                     recipient: recipient,
-                    // assetId: currency,
-                    // feeAssetId: feeCurrency,
                     fee: fee,
                     attachment: attachment
-                }).broadcast();
+                }
+
+                if (currency != "") {
+                    transferOpts["assetId"] = currency;
+                }
+
+                await this.signer.transfer(transferOpts).broadcast();
                 $("#sendSuccess").fadeIn(function(){
                     setTimeout(function(){
                         $("#sendSuccess").fadeOut();
@@ -821,11 +818,7 @@ class Wallet {
         } else if (currency == ANOTE) {
             return 30000000;
         } else if (currency == AINT) {
-            if (t.lang == "hr") {
-                return 50000;
-            } else if (t.lang == "en") {
-                return 1;
-            }
+            return 100000;
         }
         return 100000;
     }
