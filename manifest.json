@@ -1,0 +1,16 @@
+{
+    name: "Anote Wallet",
+    short_name: "Anote",
+    icons: [
+      {
+        src: "./img/favicon.png",
+        sizes: "1024x1024",
+        type: "image/png",
+      }
+    ],
+    theme_color: "#FFFFFF",
+    background_color: "#FFFFFF",
+    start_url: "/",
+    display: "standalone",
+    orientation: "portrait",
+  };
