@@ -917,27 +917,27 @@ $("#tabButton3").on( "click", function() {
     $("#tabButton3").addClass("active");
     $("#tabButton4").removeClass("active");
     $("#tabButton5").removeClass("active");
-    // $("#tab4").hide();
-    // $("#tab5").hide();
-    // $("#tab3").fadeIn();
+    $("#tab4").hide();
+    $("#tab5").hide();
+    $("#tab3").fadeIn();
 });
 
 $("#tabButton4").on( "click", function() {
     $("#tabButton4").addClass("active");
     $("#tabButton3").removeClass("active");
     $("#tabButton5").removeClass("active");
-    // $("#tab3").hide();
-    // $("#tab5").hide();
-    // $("#tab4").fadeIn();
+    $("#tab3").hide();
+    $("#tab5").hide();
+    $("#tab4").fadeIn();
 });
 
 $("#tabButton5").on( "click", function() {
     $("#tabButton5").addClass("active");
     $("#tabButton3").removeClass("active");
     $("#tabButton4").removeClass("active");
-    // $("#tab3").hide();
-    // $("#tab4").hide();
-    // $("#tab5").fadeIn();
+    $("#tab3").hide();
+    $("#tab4").hide();
+    $("#tab5").fadeIn();
 });
 
 $("#backFromSettings").on( "click", function() {
@@ -1031,7 +1031,7 @@ $("#fromCurrency").on( "change", function() {
 });
 
 $("#buttonCollectEarnings").on( "click", function() {
-    wallet.collectEarnings(AINTADDRESS);
+    // wallet.collectEarnings(AINTADDRESS);
 });
 
 $("#buttonCopy").on( "click", function() {
