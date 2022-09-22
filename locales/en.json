@@ -74,7 +74,9 @@
     "tab3": "Staking",
     "message": "This section is under the development and it will be available in the next version.",
     "minedAnotes": "Mine Anotes",
-    "mine": "Mine Anotes"
+    "mine": "Mine Anotes",
+    "captchacode": "Captcha Code",
+    "miningcode": "Mining Code"
   },
   "settings": {
     "seedWords": "Seed Words for Backup",
