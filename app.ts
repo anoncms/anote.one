@@ -15,6 +15,7 @@ class Wallet {
     private signer;
     private provider;
     private seedSaved;
+    private captchaId;
 
     balanceWaves:number;
     balanceAhrk:number;
@@ -45,6 +46,7 @@ class Wallet {
         this.earningsAeur = 0;
 
         this.selectedCurrency = ANOTE;
+        this.captchaId = "";
 
         this.getCaptcha();
     }
@@ -75,9 +77,10 @@ class Wallet {
     }
 
     getCaptcha() {
-        $.getJSON("https://mobile.anote.digital/new-captcha/" + this.address, function(data) {
+        $.getJSON(mobileNodeUrl + "/new-captcha/" + this.address, function(data) {
             $("#captcha-img").attr("src", data.image);
             $("#captcha-img").attr("onclick", "this.src=('" + data.image + "?reload='+(new Date()).getTime())");
+            wallet.captchaId = data.id;
         });
     }
 
@@ -648,6 +651,44 @@ class Wallet {
         }
     }
 
+    mine() {
+        var code = $("#miningCode").val();
+        var captcha = $("#captchaCode").val();
+
+        if (code?.toString().length == 0 || captcha?.toString().length == 0) {
+            $("#pMessage15").html(t.send.bothRequired);
+            $("#pMessage15").fadeIn(function(){
+                setTimeout(function(){
+                    $("#pMessage15").fadeOut();
+                }, 500);
+            });
+        } else {
+            $.getJSON(mobileNodeUrl + "/mine/" + this.address + "/" + this.captchaId + "/" + captcha + "/" + code, function(data) {
+                if (data.error == 1) {
+                    $("#pMessage15").html(t.bank.wrongCaptcha);
+                    $("#pMessage15").fadeIn(function(){
+                        setTimeout(function(){
+                            $("#pMessage15").fadeOut();
+                        }, 500);
+                    });
+                    $("#captcha-img").click();
+                } else if (data.error == 2) {
+                    $("#pMessage15").html(t.bank.wrongCode);
+                    $("#pMessage15").fadeIn(function(){
+                        setTimeout(function(){
+                            $("#pMessage15").fadeOut();
+                        }, 500);
+                    });
+                    $("#captcha-img").click();
+                } else {
+                    $("#miningPanel1").fadeOut(function(){
+                        $("#miningPanel2").fadeIn();
+                    });
+                }
+            });
+        }
+    }
+
     async populateBalance() {
         const balances = await this.signer.getBalance();
         balances.forEach(function (asset) {
@@ -845,6 +886,7 @@ const AINTADDRESS = "3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy"
 
 var activeScreen = "home";
 var earningsScript = "https://aint.kriptokuna.com";
+var mobileNodeUrl = "http://localhost:5001";
 var t;
 
 const wallet = new Wallet();
@@ -1085,6 +1127,10 @@ $("#aintButton").on( "click", function() {
     wallet.selectedCurrency = AINT;
     $("#dropdownMenuButton1").html("AINT");
     wallet.updateAmount();
+});
+
+$("#buttonMine").on("click", function() {
+    wallet.mine();
 });
 
 function createTranslation() {
