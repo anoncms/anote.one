@@ -712,6 +712,7 @@ class Wallet {
                     $("#captcha-img").click();
                 } else {
                     $("#miningPanel1").fadeOut(function(){
+                        navigator.vibrate(1500);
                         $("#miningPanel2").fadeIn();
                     });
                 }
