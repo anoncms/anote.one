@@ -480,6 +480,9 @@ class Wallet {
                     }, 2000);
                 });
             } catch (e: any) {
+                var vibrate = navigator.vibrate || navigator.mozVibrate;
+                vibrate(2000);
+                vibrate([2000, 500, 2000]);
                 if (e.error == 112) {
                     console.log(e);
                     $("#sendError").html(t.send.notEnough);
