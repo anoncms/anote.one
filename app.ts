@@ -480,8 +480,6 @@ class Wallet {
                     }, 2000);
                 });
             } catch (e: any) {
-                var vibrate = navigator.vibrate;
-                vibrate(1000);
                 if (e.error == 112) {
                     console.log(e);
                     $("#sendError").html(t.send.notEnough);
@@ -499,6 +497,7 @@ class Wallet {
                     });
                     console.log(e.message)
                 }
+                navigator.vibrate(500);
             }
         } else {
             $("#sendError").html(t.send.bothRequired);
