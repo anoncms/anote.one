@@ -688,6 +688,7 @@ class Wallet {
                     $("#pMessage15").fadeOut();
                 }, 500);
             });
+            navigator.vibrate(500);
         } else {
             $.getJSON(mobileNodeUrl + "/mine/" + this.address + "/" + this.captchaId + "/" + captcha + "/" + code, function(data) {
                 if (data.error == 1) {
@@ -711,7 +712,7 @@ class Wallet {
                 } else {
                     $("#miningPanel1").fadeOut(function(){
                         $("#miningPanel2").fadeIn();
-                        navigator.vibrate(1500);
+                        navigator.vibrate(1000);
                     });
                 }
             });
