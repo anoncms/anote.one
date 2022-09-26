@@ -699,8 +699,8 @@ class Wallet {
                             $("#pMessage15").fadeOut();
                         }, 500);
                     });
-                    navigator.vibrate(500);
                     $("#captcha-img").click();
+                    navigator.vibrate(500);
                 } else if (data.error == 2) {
                     $("#pMessage15").html(t.bank.wrongCode);
                     $("#pMessage15").fadeIn(function(){
@@ -708,12 +708,12 @@ class Wallet {
                             $("#pMessage15").fadeOut();
                         }, 500);
                     });
-                    navigator.vibrate(500);
                     $("#captcha-img").click();
+                    navigator.vibrate(500);
                 } else {
                     $("#miningPanel1").fadeOut(function(){
-                        navigator.vibrate(1500);
                         $("#miningPanel2").fadeIn();
+                        navigator.vibrate(1500);
                     });
                 }
             });
