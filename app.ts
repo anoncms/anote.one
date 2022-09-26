@@ -47,8 +47,6 @@ class Wallet {
 
         this.selectedCurrency = ANOTE;
         this.captchaId = "";
-
-        this.initMiningSection();
     }
 
     getPage():string {
@@ -805,6 +803,14 @@ class Wallet {
         setInterval(async function(){
             try {
                 await wallet.populateBalance();
+            } catch (e) {}
+        }, 30000);
+
+        await wallet.initMiningSection();
+
+        setInterval(async function(){
+            try {
+                await wallet.initMiningSection();
             } catch (e) {}
         }, 30000);
     }
