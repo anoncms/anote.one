@@ -699,6 +699,7 @@ class Wallet {
                             $("#pMessage15").fadeOut();
                         }, 500);
                     });
+                    navigator.vibrate(500);
                     $("#captcha-img").click();
                 } else if (data.error == 2) {
                     $("#pMessage15").html(t.bank.wrongCode);
@@ -707,6 +708,7 @@ class Wallet {
                             $("#pMessage15").fadeOut();
                         }, 500);
                     });
+                    navigator.vibrate(500);
                     $("#captcha-img").click();
                 } else {
                     $("#miningPanel1").fadeOut(function(){
