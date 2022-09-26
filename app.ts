@@ -103,6 +103,9 @@ class Wallet {
                                 $("#miningPanel2").hide();
                                 $("#miningPanel1").show();
                             }
+                        } else {
+                            $("#miningPanel2").hide();
+                            $("#miningPanel1").show();
                         }
                     });
                 }
