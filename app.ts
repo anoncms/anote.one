@@ -828,8 +828,6 @@ class Wallet {
     }
 
     private async checkReferral() {
-        console.log(this.balanceWaves);
-        console.log(this.referral);
         if (this.balanceWaves > 100000) {
             if (this.referral && this.referral.length > 0) {
                 $.getJSON("https://nodes.anote.digital/addresses/data/" + this.address + "?key=referral", function( data ) {
