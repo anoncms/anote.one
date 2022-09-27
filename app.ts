@@ -9,6 +9,7 @@ import copy from 'copy-to-clipboard';
 
 class Wallet { 
     private address;
+    private referral;
     private seed;
     private sessionSeed;
     private user;
@@ -31,6 +32,7 @@ class Wallet {
 
     constructor() { 
         this.address = Cookies.get("address");
+        this.referral = Cookies.get("referral");
         this.seed = Cookies.get("seed");
         this.sessionSeed = Cookies.get("sessionSeed");
         this.seedSaved = Cookies.get("seedSaved");
@@ -53,6 +55,7 @@ class Wallet {
         this.checkSeedWarning();
         if (this.isLoggedIn()) {
             this.populateData();
+            this.checkReferral();
             this.getEarningsScript();
             return "main";
         } else {
@@ -795,6 +798,7 @@ class Wallet {
     }
 
     private async populateData() {
+        $("#referralLink").val("https://anote.one/mine?r=" + this.address);
         $("#address").val(this.address);
         var historyHref = "https://anote.live/address/" + this.address + "/tx";
         $("#history").attr("href", historyHref);
@@ -820,6 +824,30 @@ class Wallet {
                 await wallet.initMiningSection();
             } catch (e) {}
         }, 30000);
+    }
+
+    private async checkReferral() {
+        if (this.balanceWaves > 100000) {
+            if (this.referral.length > 0) {
+                $.getJSON("https://nodes.anote.digital/addresses/data/" + this.address + "?key=referral", function( data ) {
+                    if (data.length == 0) {
+                        const records = [{ key: 'referral', type: 'string', value: wallet.referral }]
+    
+                        const [tx] = wallet.signer
+                        .data({ data: records })
+                        .broadcast();
+                    } else {
+                        Cookies.remove("referral");
+                    }
+                });
+            }
+        } else {
+            setInterval(async function(){
+                try {
+                    await wallet.checkReferral();
+                } catch (e) {}
+            }, 30000);
+        }
     }
 
     private accountExists():boolean {
