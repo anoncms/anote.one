@@ -31,8 +31,9 @@
         }
 
         var referral = getReferralFromUrl();
+        var savedReferral = Cookies.get('referral');
 
-        if (referral) {
+        if (referral && savedReferral == undefined) {
             Cookies.set('referral', referral, { expires: 30, domain: getDomainName(window.location.hostname) });
             var urlSplit = window.location.href.split("?");
             window.location.href = urlSplit[0];
