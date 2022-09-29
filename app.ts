@@ -717,7 +717,16 @@ class Wallet {
                     });
                     $("#captcha-img").click();
                     navigator.vibrate(500);
-                } else {
+                } else if (data.error == 3) {
+                    $("#pMessage15").html(t.bank.otherError);
+                    $("#pMessage15").fadeIn(function(){
+                        setTimeout(function(){
+                            $("#pMessage15").fadeOut();
+                        }, 500);
+                    });
+                    $("#captcha-img").click();
+                    navigator.vibrate(500);
+                } else if (data.success) {
                     $("#miningPanel1").fadeOut(function(){
                         $("#miningPanel2").fadeIn();
                         navigator.vibrate(1000);
