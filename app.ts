@@ -85,8 +85,6 @@ class Wallet {
     }
 
     initMiningSection() {
-        this.getCaptcha();
-
         $.getJSON("https://nodes.anote.digital/node/status", function(data) {
             var currentHeight = data.blockchainHeight;
             $.getJSON("https://nodes.anote.digital/addresses/data/3ANmnLHt8mR9c36mdfQVpBtxUs8z1mMAHQW?key=" + wallet.address, function(data) {
@@ -828,6 +826,8 @@ class Wallet {
         await wallet.initMiningSection();
 
         await wallet.checkReferral();
+
+        await wallet.getCaptcha();
 
         setInterval(async function(){
             try {
