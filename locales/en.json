@@ -141,7 +141,8 @@
       "otherError": "An error happened."
     },
     "settings": {
-      "aliasRequired": "Alias field is required."
+      "aliasRequired": "Alias field is required.",
+      "aliasMinimumBalance": "You need to have at least 0.001 anotes for this."
     },
     "bothPassRequired": "Both passwords are required.",
     "passwordsDontMatch": "Passwords don't match."
