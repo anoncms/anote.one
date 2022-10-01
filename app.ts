@@ -916,7 +916,7 @@ class Wallet {
                 });
             }
         } else {
-            setInterval(async function(){
+            setTimeout(async function(){
                 try {
                     await wallet.checkReferral();
                 } catch (e) {}
