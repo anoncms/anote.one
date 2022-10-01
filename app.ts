@@ -780,7 +780,7 @@ class Wallet {
                 $("#alias").attr("readonly", "yes");
                 setTimeout(wallet.checkAlias, 30);
             } catch (error: any) {
-                $("#pMessage16").html(error);
+                $("#pMessage16").html(t.settings.aliasLimit);
                 $("#pMessage16").fadeIn(function(){
                     setTimeout(function(){
                         $("#pMessage16").fadeOut();

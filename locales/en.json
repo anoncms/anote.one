@@ -142,7 +142,8 @@
     },
     "settings": {
       "aliasRequired": "Alias field is required.",
-      "aliasMinimumBalance": "You need to have at least 0.001 anotes for this."
+      "aliasMinimumBalance": "You need to have at least 0.001 anotes for this.",
+      "aliasLimit": "You can only use lowercase alphanumeric characters, dot, underscore, hyphen and @."
     },
     "bothPassRequired": "Both passwords are required.",
     "passwordsDontMatch": "Passwords don't match."
