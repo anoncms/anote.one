@@ -778,7 +778,7 @@ class Wallet {
                 });
 
                 $("#alias").attr("readonly", "yes");
-                await wallet.checkAlias();
+                $("#referralLink").val("https://anote.one/mine?r=" + alias);
             } catch (error: any) {
                 $("#pMessage16").html(t.settings.aliasLimit);
                 $("#pMessage16").fadeIn(function(){
