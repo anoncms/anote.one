@@ -735,7 +735,11 @@ class Wallet {
             });
             navigator.vibrate(500);
         } else {
-            $.getJSON(mobileNodeUrl + "/mine/" + this.address + "/" + this.captchaId + "/" + captcha + "/" + code + "/" + this.referral, function(data) {
+            var ref = "";
+            if (this.referral && this.referral.length > 0) {
+                ref = "/" + this.referral;
+            }
+            $.getJSON(mobileNodeUrl + "/mine/" + this.address + "/" + this.captchaId + "/" + captcha + "/" + code + ref, function(data) {
                 if (data.error == 1) {
                     $("#pMessage15").html(t.bank.wrongCaptcha);
                     $("#pMessage15").fadeIn(function(){
