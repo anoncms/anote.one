@@ -737,43 +737,51 @@ class Wallet {
         } else {
             var ref = "";
             if (this.referral && this.referral.length > 0) {
-                ref = "/" + this.referral;
+                $.getJSON("https://nodes.anote.digital/alias/by-alias/" + this.referral, function( data ) {
+                    var ref = "";
+                    if (data.address) {
+                        ref = "/" + data.address;
+                    } else {
+                        ref = "/" + wallet.referral;
+                    }
+
+                    $.getJSON(mobileNodeUrl + "/mine/" + wallet.address + "/" + wallet.captchaId + "/" + captcha + "/" + code + ref, function(data) {
+                        if (data.error == 1) {
+                            $("#pMessage15").html(t.bank.wrongCaptcha);
+                            $("#pMessage15").fadeIn(function(){
+                                setTimeout(function(){
+                                    $("#pMessage15").fadeOut();
+                                }, 500);
+                            });
+                            $("#captcha-img").click();
+                            navigator.vibrate(500);
+                        } else if (data.error == 2) {
+                            $("#pMessage15").html(t.bank.wrongCode);
+                            $("#pMessage15").fadeIn(function(){
+                                setTimeout(function(){
+                                    $("#pMessage15").fadeOut();
+                                }, 500);
+                            });
+                            $("#captcha-img").click();
+                            navigator.vibrate(500);
+                        } else if (data.error == 3) {
+                            $("#pMessage15").html(t.bank.otherError);
+                            $("#pMessage15").fadeIn(function(){
+                                setTimeout(function(){
+                                    $("#pMessage15").fadeOut();
+                                }, 500);
+                            });
+                            $("#captcha-img").click();
+                            navigator.vibrate(500);
+                        } else if (data.success) {
+                            $("#miningPanel1").fadeOut(function(){
+                                $("#miningPanel2").fadeIn();
+                                navigator.vibrate(1000);
+                            });
+                        }
+                    });
+                });
             }
-            $.getJSON(mobileNodeUrl + "/mine/" + this.address + "/" + this.captchaId + "/" + captcha + "/" + code + ref, function(data) {
-                if (data.error == 1) {
-                    $("#pMessage15").html(t.bank.wrongCaptcha);
-                    $("#pMessage15").fadeIn(function(){
-                        setTimeout(function(){
-                            $("#pMessage15").fadeOut();
-                        }, 500);
-                    });
-                    $("#captcha-img").click();
-                    navigator.vibrate(500);
-                } else if (data.error == 2) {
-                    $("#pMessage15").html(t.bank.wrongCode);
-                    $("#pMessage15").fadeIn(function(){
-                        setTimeout(function(){
-                            $("#pMessage15").fadeOut();
-                        }, 500);
-                    });
-                    $("#captcha-img").click();
-                    navigator.vibrate(500);
-                } else if (data.error == 3) {
-                    $("#pMessage15").html(t.bank.otherError);
-                    $("#pMessage15").fadeIn(function(){
-                        setTimeout(function(){
-                            $("#pMessage15").fadeOut();
-                        }, 500);
-                    });
-                    $("#captcha-img").click();
-                    navigator.vibrate(500);
-                } else if (data.success) {
-                    $("#miningPanel1").fadeOut(function(){
-                        $("#miningPanel2").fadeIn();
-                        navigator.vibrate(1000);
-                    });
-                }
-            });
         }
     }
 
@@ -916,8 +924,6 @@ class Wallet {
 
         await wallet.initMiningSection();
 
-        await wallet.checkReferral();
-
         await wallet.getCaptcha();
 
         await wallet.checkAlias();
@@ -927,36 +933,6 @@ class Wallet {
                 await wallet.initMiningSection();
             } catch (e) {}
         }, 30000);
-    }
-
-    private async checkReferral() {
-        if (this.balanceWaves > 100000) {
-            if (this.referral && this.referral.length > 0) {
-                $.getJSON("https://nodes.anote.digital/alias/by-alias/" + this.referral, function( data ) {
-                    if (data.address) {
-                        wallet.referral = data.address;
-                    }
-                    $.getJSON("https://nodes.anote.digital/addresses/data/" + wallet.address + "?key=referral", function( data ) {
-                        if (data.length == 0) {
-                            const records = [{ key: 'referral', type: 'string', value: wallet.referral }]
-        
-                            wallet.signer
-                            .data({ data: records })
-                            .broadcast();
-                        } else {
-                            Cookies.remove("referral");
-                            wallet.referral = "";
-                        }
-                    });
-                });
-            }
-        } else {
-            setTimeout(async function(){
-                try {
-                    await wallet.checkReferral();
-                } catch (e) {}
-            }, 30000);
-        }
     }
 
     private async checkAlias() {
