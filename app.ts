@@ -948,9 +948,7 @@ class Wallet {
             $.getJSON("https://nodes.anote.digital/alias/by-alias/" + this.referral, function( data ) {
                 var ref = "";
                 if (data.address) {
-                    ref = "/" + data.address;
-                } else {
-                    ref = "/" + wallet.referral;
+                    wallet.referral = data.address;
                 }
             });
         }
