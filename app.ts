@@ -1039,27 +1039,29 @@ class Wallet {
             data.forEach(function (entry) {
                 if (wallet.address == entry.value) {
                     var html = '<li><a class="dropdown-item" href="javascript: void null;" id="nodeButton' + buttonNum + '">Node: ' + entry.key + '</a></li>';
-                    // $("#dropdownMenu2").html($("#dropdownMenu2").html() + html);
                     $("#dropdownMenu2").append(html);
                     showDropdown = true;
+
+                    $("#nodeButton" + buttonNum).on( "click", function() {
+                        $("#dropdownMenuButton2").html(this.innerHTML);
+                        wallet.stakeType = this.innerHTML.replace("Node: ", "");
+                        var stakingKey = "%25s__" + wallet.stakeType;
+                        $.getJSON("https://nodes.anote.digital/addresses/data/3ACyYVfFcyco4RS8WLbyRSGPHPeCCiUuSqP?key=" + stakingKey, function( data ) {
+                            var amountStaked = 0.0;
+                            if (data.length > 0) {
+                                amountStaked = parseFloat(data[0].value) / 100000000;
+                            }
+                            $("#stakedAmount").val(amountStaked.toFixed(8));
+                        });
+                    });
+
+                    buttonNum++;
                 }
             });
-            $("#nodeButton" + buttonNum).on( "click", function() {
-                $("#dropdownMenuButton2").html(this.innerHTML);
-                wallet.stakeType = this.innerHTML.replace("Node: ", "");
-                var stakingKey = "%25s__" + wallet.stakeType;
-                $.getJSON("https://nodes.anote.digital/addresses/data/3ACyYVfFcyco4RS8WLbyRSGPHPeCCiUuSqP?key=" + stakingKey, function( data ) {
-                    var amountStaked = 0.0;
-                    if (data.length > 0) {
-                        amountStaked = parseFloat(data[0].value) / 100000000;
-                    }
-                    $("#stakedAmount").val(amountStaked.toFixed(8));
-                });
-            });
+
             if (showDropdown) {
                 $("#stakeTypeDropdown").show();
             }
-            buttonNum++;
         });
     }
 
