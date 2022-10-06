@@ -28,6 +28,7 @@ class Wallet {
     earningsWaves:number;
     earningsAhrk:number;
     earningsAeur:number;
+    stakeType:string;
 
     selectedCurrency:string;
 
@@ -51,6 +52,7 @@ class Wallet {
 
         this.selectedCurrency = ANOTE;
         this.captchaId = "";
+        this.stakeType = "mobile";
     }
 
     getPage():string {
@@ -96,32 +98,7 @@ class Wallet {
     initMiningSection() {
         $.getJSON("https://nodes.anote.digital/node/status", function(data) {
             var currentHeight = data.blockchainHeight;
-            // $.getJSON("https://nodes.anote.digital/addresses/data/3ANmnLHt8mR9c36mdfQVpBtxUs8z1mMAHQW?key=" + wallet.address, function(data) {
-            //     if (data.length == 0) {
-            //         $("#miningPanel1").hide();
-            //         $("#miningPanel2").hide();
-            //         $("#miningPanel3").show();
-            //     } else {
-            //         $.getJSON("https://nodes.anote.digital/addresses/data/3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a?key=" + wallet.address, function(data) {
-            //             if (data.length > 0) {
-            //                 var miningHeight = data[0].value;
-            //                 if (currentHeight - miningHeight <= 1440) {
-            //                     $("#miningPanel1").hide();
-            //                     $("#miningPanel3").hide();
-            //                     $("#miningPanel2").show();
-            //                 } else {
-            //                     $("#miningPanel2").hide();
-            //                     $("#miningPanel3").hide();
-            //                     $("#miningPanel1").show();
-            //                 }
-            //             } else {
-            //                 $("#miningPanel2").hide();
-            //                 $("#miningPanel3").hide();
-            //                 $("#miningPanel1").show();
-            //             }
-            //         });
-            //     }
-            // });
+
             $.getJSON("https://nodes.anote.digital/addresses/data/3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a?key=" + wallet.address, function(data) {
                 if (data.length > 0) {
                     var miningData = data[0].value;
@@ -141,9 +118,6 @@ class Wallet {
                         $("#miningPanel1").show();
                     }
                 } else {
-                    // $("#miningPanel2").hide();
-                    // $("#miningPanel3").hide();
-                    // $("#miningPanel1").show();
                     $("#miningPanel1").hide();
                     $("#miningPanel2").hide();
                     $("#miningPanel3").show();
@@ -779,6 +753,110 @@ class Wallet {
         }
     }
 
+    async stakeAint() {
+        var a = $("#stakeAmount").val();
+        var amount = 0;
+        if (a != undefined && a != "") {
+            amount = parseFloat(a?.toString()) * 100000000;
+        }
+
+        if (amount > this.balanceAint) {
+            $("#pMessage11").html("You don't have enough AINT.");
+            $("#pMessage11").fadeIn(function(){
+                setTimeout(function(){
+                    $("#pMessage11").fadeOut();
+                }, 2000);
+            });
+            navigator.vibrate(500);
+        } else if (amount > 0) {
+            try {
+                const [tx] = await this.signer.invoke({
+                    dApp: "3ACyYVfFcyco4RS8WLbyRSGPHPeCCiUuSqP",
+                    call: { function: "lockAint", args: [{ type: 'string', value: this.stakeType }] },
+                    fee: 500000,
+                    payment: [{
+                        assetId: AINT,
+                        amount: amount,
+                    }],
+                }).broadcast();
+
+                // setTimeout(wallet.populateStaking, 10000);
+
+                $("#stakeAmount").val("");
+
+                $("#pMessage10").fadeIn(function(){
+                    setTimeout(function(){
+                        $("#pMessage10").fadeOut();
+                    }, 500);
+                });
+            } catch (e: any) {
+                $("#pMessage11").html(e);
+                $("#pMessage11").fadeIn(function(){
+                    setTimeout(function(){
+                        $("#pMessage11").fadeOut();
+                    }, 2000);
+                });
+                console.log(e.message)
+                navigator.vibrate(500);
+            }
+
+        } else {
+            $("#pMessage11").html(t.exchange.amountRequired);
+            $("#pMessage11").fadeIn(function(){
+                setTimeout(function(){
+                    $("#pMessage11").fadeOut();
+                }, 2000);
+            });
+            navigator.vibrate(500);
+        }
+    }
+
+    async unstakeAint() {
+        var a = $("#stakeAmount").val();
+        var amount = 0;
+        if (a != undefined && a != "") {
+            amount = parseFloat(a?.toString()) * 100000000;
+        }
+
+        if (amount > 0) {
+            try {
+                const [tx] = await this.signer.invoke({
+                    dApp: "3ACyYVfFcyco4RS8WLbyRSGPHPeCCiUuSqP",
+                    call: { function: "unlockAint", args: [{ type: 'string', value: this.stakeType }, { type: 'integer', value: amount }] },
+                    fee: 500000,
+                }).broadcast();
+
+                // setTimeout(wallet.populateStaking, 10000);
+
+                $("#stakeAmount").val("");
+
+                $("#pMessage10").fadeIn(function(){
+                    setTimeout(function(){
+                        $("#pMessage10").fadeOut();
+                    }, 500);
+                });
+            } catch (e: any) {
+                $("#pMessage11").html(e.message);
+                $("#pMessage11").fadeIn(function(){
+                    setTimeout(function(){
+                        $("#pMessage11").fadeOut();
+                    }, 2000);
+                });
+                console.log(e.message)
+                navigator.vibrate(500);
+            }
+
+        } else {
+            $("#pMessage11").html(t.exchange.amountRequired);
+            $("#pMessage11").fadeIn(function(){
+                setTimeout(function(){
+                    $("#pMessage11").fadeOut();
+                }, 2000);
+            });
+            navigator.vibrate(500);
+        }
+    }
+
     async saveAlias() {
         var alias = $("#alias").val();
 
@@ -922,6 +1000,8 @@ class Wallet {
 
         await wallet.checkAlias();
 
+        await wallet.populateStaking();
+
         await wallet.checkReferral();
 
         setInterval(async function(){
@@ -940,6 +1020,32 @@ class Wallet {
                 $("#referralLink").val("https://anote.one/mine?r=" + alias);
                 $("#saveAlias").remove();
             }
+        });
+    }
+
+    private async populateStaking() {
+        var stakingKey = "%25s__" + this.address;
+        $.getJSON("https://nodes.anote.digital/addresses/data/3ACyYVfFcyco4RS8WLbyRSGPHPeCCiUuSqP?key=" + stakingKey, function( data ) {
+            var amountStaked = 0.0;
+            if (data.length > 0) {
+                amountStaked = parseFloat(data[0].value) / 100000000;
+            }
+            $("#stakedAmount").val(amountStaked.toFixed(8));
+        });
+
+        $.getJSON("https://nodes.anote.digital/addresses/data/3AVTze8bR1SqqMKv3uLedrnqCuWpdU7GZwX", function( data ) {
+            data.forEach(function (entry) {
+                if (wallet.address == entry.value) {
+                    var html = '<li><a class="dropdown-item" href="javascript: void null;" id="nodeButton">Node: ' + entry.key + '</a></li>';
+                    // $("#dropdownMenu2").html($("#dropdownMenu2").html() + html);
+                    $("#dropdownMenu2").append(html);
+                }
+            });
+            $("#nodeButton").on( "click", function() {
+                $("#dropdownMenuButton2").html(this.innerHTML);
+                wallet.stakeType = this.innerHTML.replace("Node: ", "");
+                console.log(wallet.stakeType);
+            });
         });
     }
 
@@ -1309,8 +1415,27 @@ $("#aintButton").on( "click", function() {
     wallet.updateAmount();
 });
 
+$("#mobileButton").on( "click", function() {
+    wallet.stakeType = "mobile";
+    $("#dropdownMenuButton2").html("Mobile Mining");
+});
+
+// $("#nodeButton").on( "click", function() {
+//     // wallet.selectedCurrency = ANOTE;
+//     $("#dropdownMenuButton2").html(this.innerHTML);
+//     console.log(this.innerHTML);
+// });
+
 $("#buttonMine").on("click", function() {
     wallet.mine();
+});
+
+$("#buttonStakeAint").on("click", function() {
+    wallet.stakeAint();
+});
+
+$("#buttonUnstakeAint").on("click", function() {
+    wallet.unstakeAint();
 });
 
 $("#saveAlias").on("click", function() {
