@@ -1034,11 +1034,13 @@ class Wallet {
         });
 
         $.getJSON("https://nodes.anote.digital/addresses/data/3AVTze8bR1SqqMKv3uLedrnqCuWpdU7GZwX", function( data ) {
+            var showDropdown = false;
             data.forEach(function (entry) {
                 if (wallet.address == entry.value) {
                     var html = '<li><a class="dropdown-item" href="javascript: void null;" id="nodeButton">Node: ' + entry.key + '</a></li>';
                     // $("#dropdownMenu2").html($("#dropdownMenu2").html() + html);
                     $("#dropdownMenu2").append(html);
+                    showDropdown = true;
                 }
             });
             $("#nodeButton").on( "click", function() {
@@ -1046,6 +1048,9 @@ class Wallet {
                 wallet.stakeType = this.innerHTML.replace("Node: ", "");
                 console.log(wallet.stakeType);
             });
+            if (showDropdown) {
+                $("#stakeTypeDropdown").show();
+            }
         });
     }
 
