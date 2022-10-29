@@ -801,7 +801,7 @@ class Wallet {
                     $("#pMessage15").fadeIn(function(){
                         setTimeout(function(){
                             $("#pMessage15").fadeOut();
-                        }, 500);
+                        }, 2000);
                     });
                     $("#captcha-img").click();
                     navigator.vibrate(500);
