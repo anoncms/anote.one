@@ -108,7 +108,8 @@ class Wallet {
                     } else {
                         var miningHeight = 0;
                     }
-                    if (currentHeight - miningHeight <= 1440) {
+                    if (currentHeight - miningHeight <= 1410) {
+                        wallet.updateBlocks();
                         $("#miningPanel1").hide();
                         $("#miningPanel3").hide();
                         $("#miningPanel2").show();
@@ -126,6 +127,28 @@ class Wallet {
         });
 
         $("#buttonTelegram").attr("href", "https://t.me/AnoteRobot?start=" + this.address);
+    }
+
+    updateBlocks() {
+        $.getJSON("https://nodes.anote.digital/node/status", function(data) {
+            var currentHeight = data.blockchainHeight;
+            $.getJSON("https://nodes.anote.digital/addresses/data/3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a?key=" + wallet.address, function(data) {
+                if (data.length > 0) {
+                    var miningData = data[0].value;
+                    var mdSplit = miningData.split("__")
+                    if (mdSplit.length >= 3) {
+                        var miningHeight = parseInt(miningData.split("__")[2]);
+                    } else {
+                        var miningHeight = 0;
+                    }
+                    if (currentHeight - miningHeight <= 1410) {
+                        var blocks = currentHeight - miningHeight;
+                        $("#blocks").html(blocks?.toString());             
+                        setTimeout(wallet.updateBlocks, 60000);
+                    }
+                }
+            });
+        });
     }
 
     getEarningsScript() {
