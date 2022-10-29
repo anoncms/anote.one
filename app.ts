@@ -142,9 +142,45 @@ class Wallet {
                         var miningHeight = 0;
                     }
                     if (currentHeight - miningHeight <= 1410) {
-                        var blocks = currentHeight - miningHeight;
+                        var blocks = 1410 - currentHeight + miningHeight;
                         $("#blocks").html(blocks?.toString());             
                         setTimeout(wallet.updateBlocks, 60000);
+
+                        var hours = Math.floor(blocks / 60);
+                        var countdown = "";
+                        if (hours < 10) {
+                            countdown += "0";
+                        }
+                        countdown += hours + ":";
+                        var minutes = blocks % 60;
+                        if (minutes < 10) {
+                            countdown += "0";
+                        }
+                        countdown += minutes + ":00";
+                        $("#countdown").html(countdown);
+
+                        var seconds = blocks * 60;
+
+                        setInterval(function() {
+                            var countdown = "";
+                            seconds--;
+                            var hours = Math.floor(seconds / 60 / 60);
+                            if (hours < 10) {
+                                countdown += "0";
+                            }
+                            countdown += hours + ":";
+                            var minutes = Math.floor(seconds / 60) % 60;
+                            if (minutes < 10) {
+                                countdown += "0";
+                            }
+                            countdown += minutes + ":";
+                            var sec = seconds % 60;
+                            if (sec < 10) {
+                                countdown += "0";
+                            }
+                            countdown += sec;
+                            $("#countdown").html(countdown);
+                        }, 1000);
                     }
                 }
             });
