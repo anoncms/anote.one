@@ -148,7 +148,7 @@ class Wallet {
                         setTimeout(wallet.updateBlocks, 60000);
 
                         var hours = Math.floor(blocks / 60);
-                        var countdown = "";
+                        var countdown = "~ ";
                         if (hours < 10) {
                             countdown += "0";
                         }
@@ -165,7 +165,7 @@ class Wallet {
                         clearInterval(wallet.mineInterval);
 
                         wallet.mineInterval = setInterval(function() {
-                            var countdown = "";
+                            var countdown = "~ ";
                             seconds--;
                             var hours = Math.floor(seconds / 60 / 60);
                             if (hours < 10) {
