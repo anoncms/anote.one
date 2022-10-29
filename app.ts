@@ -748,7 +748,7 @@ class Wallet {
                     $("#pMessage15").fadeIn(function(){
                         setTimeout(function(){
                             $("#pMessage15").fadeOut();
-                        }, 500);
+                        }, 1000);
                     });
                     navigator.vibrate(500);
                 } else if (data.success) {
