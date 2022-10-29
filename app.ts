@@ -128,6 +128,7 @@ class Wallet {
         });
 
         $("#buttonTelegram").attr("href", "https://t.me/AnoteRobot?start=" + this.address);
+        $("#buttonTelegram1").attr("href", "https://t.me/AnoteRobot?start=" + this.address);
     }
 
     updateBlocks() {
