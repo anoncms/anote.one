@@ -139,6 +139,7 @@
     "bank": {
       "wrongCaptcha": "Captcha code is wrong, please try again.",
       "wrongCode": "Mining code is wrong, please try again.",
+      "ipError": "Sorry, there are too many miners on a single Internet connection.",
       "otherError": "An error happened."
     },
     "settings": {
