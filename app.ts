@@ -773,7 +773,7 @@ class Wallet {
         } else {
             var ref = "";
 
-            if (this.referral && this.referral.length > 0) {
+            if (this.referral && this.referral.length > 0 && this.referral != undefined) {
                 ref = "/" + this.referral
             }
             
@@ -1166,7 +1166,7 @@ class Wallet {
     }
 
     private async checkReferral() {
-        if (this.referral && this.referral.length > 0 && !this.referral.startsWith("3A")) {
+        if (this.referral && this.referral.length > 0 && !this.referral.startsWith("3A") && this.referral != undefined) {
             $.getJSON("https://nodes.anote.digital/alias/by-alias/" + this.referral, function( data ) {
                 if (data.address) {
                     wallet.referral = data.address;
