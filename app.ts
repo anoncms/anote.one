@@ -1170,6 +1170,7 @@ class Wallet {
             $.getJSON("https://nodes.anote.digital/alias/by-alias/" + this.referral, function( data ) {
                 if (data.address) {
                     wallet.referral = data.address;
+                    Cookies.remove("referral");
                     Cookies.set("referral", data.address, { expires: 365*24*10 });
                 }
                 if (wallet.referral.length > 0) {
