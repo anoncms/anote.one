@@ -38,6 +38,7 @@
     "feeMessage": "Withdrawal fee is 10 ANOTEs",
     "collectSuccess": "Withdrawal was successful.",
     "aintTitle": "AINT Tokens",
+    "mintAintTitle": "Mint AINT Tokens",
     "aintCurrency": "AINTs",
     "aintEarnings": "Accumulated AINT earnings",
     "aintCollectEarnings": "Withdraw",
