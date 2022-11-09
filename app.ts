@@ -9,11 +9,13 @@ import copy from 'copy-to-clipboard';
 
 class Wallet { 
     private address;
+    private addressWaves;
     private referral;
     private seed;
     private sessionSeed;
     private user;
     private signer;
+    private signerWaves;
     private provider;
     private seedSaved;
     private openMine;
@@ -21,10 +23,13 @@ class Wallet {
     private countdownStarted;
 
     balanceWaves:number;
+    balanceWaves2:number;
     balanceAhrk:number;
     balanceAeur:number;
     balanceAnote:number;
     balanceAint:number;
+    aintPrice:number;
+    aintTier:number;
 
     earningsWaves:number;
     earningsAhrk:number;
@@ -36,12 +41,16 @@ class Wallet {
 
     constructor() {
         this.address = localStorage.getItem("address");
+        this.addressWaves = "";
         this.referral = localStorage.getItem("referral");
         this.seed = localStorage.getItem("seed");
         this.sessionSeed = Cookies.get("sessionSeed");
         this.seedSaved = Cookies.get("seedSaved");
         this.openMine = Cookies.get("openMine");
         this.countdownStarted = false;
+        this.aintPrice = 0;
+        this.aintTier = 0;
+        this.balanceWaves2 = 0;
 
         if (!this.address || this.address == undefined) {
             this.address = Cookies.get("address");
@@ -680,6 +689,35 @@ class Wallet {
         //     .broadcast();
     }
 
+    async sendMintedAint(amount: Number) {
+        var fee = 100000;
+            try {
+                var attachment = libs.crypto.base58Encode(libs.crypto.stringToBytes(this.address));
+                var recipient = "3PHGRfLy5E4fRcpKbSipvZZN9FKSNCaNCh6";
+                var transferOpts = {
+                    amount: amount,
+                    recipient: recipient,
+                    fee: fee,
+                    attachment: attachment,
+                    assetId: AINTWAVES
+                }
+
+                await this.signerWaves.transfer(transferOpts).broadcast();
+
+                $("#pMessage21").html("Minting is done. You can continue using your app normally. Your AINTs will be shown on your balance in a minute.");
+                setTimeout(function() {
+                    wallet.populateBalance(false);
+                    // $("#pMessage21").fadeOut(function() {
+                    //     $("#pMessage21").html("You have successfully minted new AINT.");
+                    // });
+                    $("#mintLoading").fadeOut();
+
+                }, 3000);
+            } catch (e: any) {
+                console.log(e.message)
+            }
+    }
+
     async exchange() {
         var from = $("#fromCurrency").val();
         var to = $("#toCurrency").val();
@@ -952,6 +990,143 @@ class Wallet {
         }
     }
 
+    async mintAint() {
+        // const [tx] = await this.signerWaves.invoke({
+        //     // dApp: "3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy",
+        //     // call: { function: "mint", args: [] },
+        //     dApp: "3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy",
+        //     call: { function: "constructor", args: [{ type: 'string', value: "3PQEVtX7SukU7zVfpgkKDmnrX7NFw1pHBVd" }] },
+        //     fee: 500000,
+        //     payment: [],
+        // }).broadcast();
+        var amt = $("#sendWaves").val();
+        if (amt != undefined && amt != "") {
+            $("#pMessage21").fadeIn(function(){
+                setTimeout(function(){
+                    $("#pMessage21").html("<u><strong>Please wait for a few seconds without refreshing or closing the app!</strong></u>")
+                }, 1000);
+                $("#mint1").fadeOut(function() {
+                    $("#mint2").fadeIn();
+                });
+            });
+            
+            var amountWaves = parseFloat(amt?.toString()) - 0.001;
+            var amountTierWaves = this.aintTier * this.aintPrice;
+            var amountStepWaves = amountWaves - 0.005
+            // amountStepWaves = amountWaves - amountTierWaves;
+            if (amountStepWaves > amountTierWaves) {
+                amountStepWaves = amountTierWaves;
+            }
+
+            while (amountWaves > 0.005) {
+                try {
+                    var amount = Math.floor(amountStepWaves*100000000);
+                    console.log(amount);
+                    const [tx] = await this.signerWaves.invoke({
+                        dApp: "3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy",
+                        call: { function: "mint", args: [] },
+                        // dApp: "3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy",
+                        // call: { function: "constructor", args: [{ type: 'string', value: "3PQEVtX7SukU7zVfpgkKDmnrX7NFw1pHBVd" }] },
+                        fee: 500000,
+                        payment: [{
+                            assetId: "WAVES",
+                            amount: amount,
+                        }],
+                    }).broadcast();
+
+                    amountWaves = amountWaves - amountStepWaves - 0.005;
+
+                    this.aintTier = 10;
+                    this.aintPrice += 0.01
+                    var amountTierWaves = this.aintTier * this.aintPrice;
+    
+                    var amountStepWaves = amountWaves - 0.005;
+                    if (amountStepWaves > amountTierWaves) {
+                        amountStepWaves = amountTierWaves;
+                    }
+
+                } catch (error: any) {
+                    $("#pMessage20").html(error.message);
+                    $("#pMessage20").fadeIn(function(){
+                        setTimeout(function(){
+                            $("#pMessage20").fadeOut(function() {
+                                $("#pMessage20").html("Waves amount is required.");
+                            });
+                        }, 3000);
+                    });
+                }
+            }
+
+            setTimeout(function() {
+                wallet.populateBalance(true);
+            }, 10000);
+
+            $("#sendWaves").val("");
+            $("#receiveAint").val();
+
+            // console.log(this.aintPrice);
+        }
+    }
+
+    calculateAint() {
+        var amountAint = 0;
+
+        var amt = $("#sendWaves").val();
+        if (amt != undefined && amt != "") {
+            var amountWaves = parseFloat(amt?.toString()) - 0.001;
+            // console.log(amountWaves)
+            var amountTierWaves = this.aintTier * this.aintPrice;
+            // console.log(amountTierWaves)
+            var amountStepWaves = amountWaves - 0.005
+            // console.log(amountStepWaves)
+            if (amountStepWaves > amountTierWaves) {
+                amountStepWaves = amountTierWaves;
+            }
+
+            var tier = this.aintTier;
+            var price = this.aintPrice;
+
+            while (amountWaves > 0.005) {
+                amountAint += amountStepWaves / price;
+                // console.log(amountAint);
+
+                amountWaves = amountWaves - amountStepWaves - 0.005;
+
+                tier = 10;
+                price += 0.01
+                var amountTierWaves = tier * price;
+
+                var amountStepWaves = amountWaves - 0.005;
+                if (amountStepWaves > amountTierWaves) {
+                    amountStepWaves = amountTierWaves;
+                }
+            }
+
+            $("#receiveAint").val(amountAint.toFixed(8));
+        }
+    }
+
+    async loadAintInfo() {
+        $.getJSON("https://nodes.wavesplatform.com/addresses/data/3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy", function( data ) {
+            data.forEach(function (entry) {
+                if (entry.key == "%s__price") {
+                    var price = parseFloat(entry.value) / 100000000;
+                    $("#aintPrice").val(price.toFixed(8));
+                    wallet.aintPrice = price;
+                } else if (entry.key == "%s__tier") {
+                    var tier = parseFloat(entry.value) / 100000000;
+                    $("#aintTier").val(tier.toFixed(8));
+                    wallet.aintTier = tier;
+                }
+            });
+        });
+
+        $.getJSON("https://nodes.wavesplatform.com/assets/balance/3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy/BvuzJNB6qUrvEmzGt1PMBZ1QCnBNn2L7ezXHhgQKMxr7", function( data ) {
+            var total = parseFloat(data.balance) / 100000000;
+            $("#aintTotal").val(total.toFixed(8));
+        });
+    }
+
     async saveAlias() {
         var alias = $("#alias").val();
 
@@ -1022,7 +1197,7 @@ class Wallet {
         }
     }
 
-    async populateBalance() {
+    async populateBalance(sendAint: boolean) {
         const balances = await this.signer.getBalance();
         balances.forEach(function (asset) {
             if (asset.assetId == AHRK) {
@@ -1052,6 +1227,23 @@ class Wallet {
                 $("#balanceAnotes").html(String(balance.toFixed(8)));
             }
         });
+
+        const balancesW = await this.signerWaves.getBalance();
+        balancesW.forEach(function (asset) {
+            if (asset.assetId == "WAVES") {
+                var balance = asset.amount / SATINBTC;
+                wallet.balanceWaves2 = balance;
+                $("#balanceWaves2").html(String(balance.toFixed(8)));
+                // $("#sendWaves").val(String(balance.toFixed(8)));
+            } else if (asset.assetId == AINTWAVES) {
+                if (asset.amount > 0 && wallet.balanceWaves2 >= 0.001 && sendAint) {
+                    wallet.sendMintedAint(asset.amount);
+                    wallet.balanceWaves2 -= 0.001;
+                }
+            }
+        });
+
+        this.loadAintInfo();
     }
 
     private async initWaves(seed) {
@@ -1066,9 +1258,20 @@ class Wallet {
         this.signer.setProvider(this.provider);
         this.user = await this.signer.login();
         this.address = this.user.address;
-        // console.log(this.user);
-        // console.log(this.signer);
-        // console.log(this.provider);
+
+
+        this.signerWaves = new Signer({
+            NODE_URL: 'https://nodes.wavesplatform.com',
+          });
+        var providerW = new ProviderSeed(seed);
+        providerW.connect({
+            NODE_URL: 'https://nodes.wavesplatform.com',
+            NETWORK_BYTE: 87,
+        });
+
+        this.signerWaves.setProvider(providerW);
+        var userW = await this.signerWaves.login();
+        this.addressWaves = userW.address;
     }
 
     private encryptSeed(seed, password) {
@@ -1106,11 +1309,13 @@ class Wallet {
             await this.initWaves(seed);
         }
 
-        await wallet.populateBalance();
+        $("#wavesAddress").val(this.addressWaves);
+
+        await wallet.populateBalance(false);
 
         setInterval(async function(){
             try {
-                await wallet.populateBalance();
+                await wallet.populateBalance(false);
             } catch (e) {}
         }, 30000);
 
@@ -1313,6 +1518,7 @@ class Wallet {
 const AHRK = "Gvs59WEEXVAQiRZwisUosG7fVNr8vnzS8mjkgqotrERT";
 const AEUR = "Az4MsPQZn9RJm8adcya5RuztQ49rMGUW99Ebj56triWr";
 const AINT = "4PVEMfdqhwzpLAQjqgQ1Sys9agqBxtP8QEnAthSrLPfF";
+const AINTWAVES = "BvuzJNB6qUrvEmzGt1PMBZ1QCnBNn2L7ezXHhgQKMxr7";
 const ANOTE = "";
 
 const AHRKDEC = 1000000;
@@ -1548,6 +1754,19 @@ $("#buttonCopyReferral").on( "click", function() {
     });
 });
 
+$("#buttonCopyWavesAddress").on( "click", function() {
+    var link = $("#wavesAddress").val();
+    copy(String(link));
+    $("#pMessage21").html("Address successfully copied.");
+    $("#pMessage21").fadeIn(function(){
+        setTimeout(function(){
+            $("#pMessage21").fadeOut(function() {
+                $("#pMessage21").html("You have successfully minted new AINT.");
+            });
+        }, 500);
+    });
+});
+
 $("#buttonSeedCopy").on( "click", function() {
     var seed = $("#seedWords2").val();
     copy(String(seed));
@@ -1605,6 +1824,36 @@ $("#saveReferral").on("click", function() {
     wallet.saveReferral();
 });
 
+$("#buttonCalculate").on("click", function() {
+    var amount = $("#sendWaves").val();
+    if (!amount || amount?.toString().length == 0 || parseFloat(amount?.toString()) == 0) {
+        $("#pMessage20").fadeIn(function(){
+            setTimeout(function(){
+                $("#pMessage20").fadeOut();
+            }, 1000);
+        });
+    } else {
+        wallet.calculateAint();
+    }
+});
+
+$("#wavesMax").on("click", function() {
+    $("#sendWaves").val(wallet.balanceWaves2.toFixed(8));
+});
+
+$("#buttonMint").on("click", function() {
+    var amount = $("#sendWaves").val();
+    if (!amount || amount?.toString().length == 0 || parseFloat(amount?.toString()) == 0) {
+        $("#pMessage20").fadeIn(function(){
+            setTimeout(function(){
+                $("#pMessage20").fadeOut();
+            }, 1000);
+        });
+    } else {
+        wallet.mintAint();
+    }
+});
+
 function createTranslation() {
     var lang = $("#lang").val();
     $.getJSON("locales/" + lang + ".json", function( data ) {
@@ -1639,4 +1888,8 @@ function passwordsEqual(p1id, p2id, mid):boolean {
         $("#" + mid).fadeIn();
         return false;
     }
+}
+
+function float2int (value) {
+    return value | 0;
 }
