@@ -1757,12 +1757,9 @@ $("#buttonCopyReferral").on( "click", function() {
 $("#buttonCopyWavesAddress").on( "click", function() {
     var link = $("#wavesAddress").val();
     copy(String(link));
-    $("#pMessage21").html("Address successfully copied.");
-    $("#pMessage21").fadeIn(function(){
+    $("#pMessage22").fadeIn(function(){
         setTimeout(function(){
-            $("#pMessage21").fadeOut(function() {
-                $("#pMessage21").html("You have successfully minted new AINT.");
-            });
+            $("#pMessage22").fadeOut();
         }, 500);
     });
 });
