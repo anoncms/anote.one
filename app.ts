@@ -1036,7 +1036,7 @@ class Wallet {
 
                     amountWaves = amountWaves - amountStepWaves - 0.005;
 
-                    this.aintTier = 10;
+                    this.aintTier = 100;
                     this.aintPrice += 0.01
                     var amountTierWaves = this.aintTier * this.aintPrice;
     
@@ -1092,7 +1092,7 @@ class Wallet {
 
                 amountWaves = amountWaves - amountStepWaves - 0.005;
 
-                tier = 10;
+                tier = 100;
                 price += 0.01
                 var amountTierWaves = tier * price;
 
