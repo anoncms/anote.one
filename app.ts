@@ -890,7 +890,7 @@ class Wallet {
         var a = $("#stakeAmount").val();
         var amount = 0;
         if (a != undefined && a != "") {
-            amount = parseFloat(a?.toString()) * 100000000;
+            amount = Math.ceil(parseFloat(a?.toString()) * 100000000);
         }
 
         if (amount > this.balanceAint) {
@@ -948,11 +948,11 @@ class Wallet {
         var a = $("#stakeAmount").val();
         var amount = 0;
         if (a != undefined && a != "") {
-            amount = parseFloat(a?.toString()) * 100000000;
+            amount = Math.ceil(parseFloat(a?.toString()) * 100000000);
+            console.log(amount);
         }
 
         if (amount > 0) {
-            console.log(this.stakeType);
             try {
                 const [tx] = await this.signer.invoke({
                     dApp: "3A9y1Zy78DDApbQWXKxonXxci6DvnJnnNZD",
