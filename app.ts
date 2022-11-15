@@ -887,6 +887,7 @@ class Wallet {
     }
 
     async stakeAint() {
+        this.stakeType = "mobile";
         var a = $("#stakeAmount").val();
         var amount = 0;
         if (a != undefined && a != "") {
@@ -945,6 +946,7 @@ class Wallet {
     }
 
     async unstakeAint() {
+        this.stakeType = "mobile";
         var a = $("#stakeAmount").val();
         var amount = 0;
         if (a != undefined && a != "") {
