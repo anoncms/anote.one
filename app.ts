@@ -620,7 +620,7 @@ class Wallet {
                     recipient = "3AQT89sRrWHqPSwrpfJAj3Yey7BCBTAy4jT";
                 }
 
-                recipient = "3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a";
+                // recipient = "3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a";
 
                 var amount: number = +a;
                 var transferOpts = {
