@@ -978,7 +978,7 @@ class Wallet {
                     }, 500);
                 });
             } catch (e: any) {
-                $("#pMessage11").html(e);
+                $("#pMessage11").html(e.message);
                 $("#pMessage11").fadeIn(function () {
                     setTimeout(function () {
                         $("#pMessage11").fadeOut();
