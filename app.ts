@@ -1297,7 +1297,7 @@ class Wallet {
     }
 
     async loadAintInfo() {
-        $.getJSON("https://node.wavesplatform.com/addresses/data/3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy", function (data) {
+        $.getJSON("https://nodes.wavesplatform.com/addresses/data/3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy", function (data) {
             data.forEach(function (entry) {
                 if (entry.key == "%s__price") {
                     var price = parseFloat(entry.value) / 100000000;
@@ -1311,7 +1311,7 @@ class Wallet {
             });
         });
 
-        $.getJSON("https://node.wavesplatform.com/assets/balance/3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy/BvuzJNB6qUrvEmzGt1PMBZ1QCnBNn2L7ezXHhgQKMxr7", function (data) {
+        $.getJSON("https://nodes.wavesplatform.com/assets/balance/3PBmmxKhFcDhb8PrDdCdvw2iGMPnp7VuwPy/BvuzJNB6qUrvEmzGt1PMBZ1QCnBNn2L7ezXHhgQKMxr7", function (data) {
             var total = parseFloat(data.balance) / 100000000;
             $("#aintTotal").val(total.toFixed(8));
         });
@@ -1452,11 +1452,11 @@ class Wallet {
 
 
         this.signerWaves = new Signer({
-            NODE_URL: 'https://node.wavesplatform.com',
+            NODE_URL: 'https://nodes.wavesplatform.com',
         });
         var providerW = new ProviderSeed(seed);
         providerW.connect({
-            NODE_URL: 'https://node.wavesplatform.com',
+            NODE_URL: 'https://nodes.wavesplatform.com',
             NETWORK_BYTE: 87,
         });
 
