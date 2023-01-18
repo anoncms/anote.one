@@ -1524,11 +1524,24 @@ class Wallet {
 
         await wallet.checkReferral();
 
+        await wallet.populateAlphaBalance();
+
         setInterval(async function () {
             try {
                 await wallet.initMiningSection();
             } catch (e) { }
         }, 30000);
+    }
+
+    async populateAlphaBalance() {
+        $.getJSON("https://static.anote.digital/alpha-distribution.json", function (data) {
+            data.forEach(function (entry) {
+                if (entry.address == wallet.address) {
+                    $("#balanceAlpha").html(entry.balance_float.toFixed(3));
+                    $("#ba").show();
+                }
+            });
+        });
     }
 
     async getAdNumber() {
