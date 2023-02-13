@@ -9,12 +9,12 @@ var address = '';
 var seed = '';
 
 function loadData() {
-    var s = localStorage.getItem('seed'); 
+    var s = localStorage.getItem('seedTemp'); 
     if (s != null) {
         seed = s;
     }
 
-    var a = localStorage.getItem('address'); 
+    var a = localStorage.getItem('addressTemp'); 
     if (a != null) {
         address = a;
     }
@@ -34,8 +34,8 @@ async function createUser() {
     var user = await signer.login();
     address = user.address;
 
-    localStorage.setItem("seed", seed);
-    localStorage.setItem("address", address);
+    localStorage.setItem("seedTemp", seed);
+    localStorage.setItem("addressTemp", address);
 }
 
 function userExists() {
