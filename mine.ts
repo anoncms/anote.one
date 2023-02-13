@@ -5,9 +5,9 @@ import Cookies from "js-cookie";
 import $ from "jquery";
 import copy from 'copy-to-clipboard';
 
-var referral = Cookies.get('referral');
-var address = '';
-var seed = '';
+let referral = Cookies.get('referral');
+let address = '';
+let seed = '';
 
 function loadData() {
     var s = localStorage.getItem('seedTemp'); 
@@ -37,6 +37,20 @@ async function createUser() {
 
     localStorage.setItem("seedTemp", seed);
     localStorage.setItem("addressTemp", address);
+
+    isReferralAlias();
+}
+
+function saveUserServer() {
+    var url = 'https://mobile.anote.digital/new-user/' + address;
+    if (referral != undefined && referral?.length > 0) {
+        url += '/' + referral;
+    }
+    $.getJSON(url, function(data) {
+        if (!data.success) {
+            console.log(data.error);
+        }
+    });
 }
 
 function userExists() {
@@ -45,6 +59,30 @@ function userExists() {
         ue = true;
     }
     return ue;
+}
+
+function isReferralAlias() {
+    if (referral != undefined && referral?.length > 0) {
+        $.getJSON("https://node.anote.digital/alias/by-alias/" + referral, function(data) {
+            if (data.error != undefined && data.error > 0) {
+                console.log(data.message);
+            } else {
+                referral = data.address;
+            }
+            isReferralValid();
+        });
+    }
+}
+
+function isReferralValid() {
+    if (referral != undefined && referral?.length > 0) {
+        $.getJSON("https://node.anote.digital/addresses/validate/" + referral, function(data) {
+            if (!data.valid) {
+                referral = '';
+            }
+            saveUserServer();
+        });
+    }
 }
 
 async function main() {
