@@ -1386,8 +1386,8 @@ class Wallet {
                 }, 500);
             });
 
-            $.getJSON("https://node.anote.digital/new-user/" + this.address + "/" + referral, function (data) {
-                console.log(data);
+            $.getJSON("https://mobile.anote.digital/new-user/" + this.address + "/" + referral, function (data) {
+                // console.log(data);
             });
         }
     }
