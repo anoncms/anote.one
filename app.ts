@@ -66,6 +66,12 @@ class Wallet {
             }
         }
 
+        if (this.referral && this.referral.length > 0 && this.referral != undefined) {
+            $("#referral").attr("readonly", "yes");
+            $("#referral").val(this.referral);
+            $("#saveReferral").remove();
+        }
+
         if (!this.seed || this.seed == undefined) {
             this.seed = Cookies.get("seed");
             if (this.seed && this.seed.length > 0 && this.seed != undefined) {
@@ -196,29 +202,31 @@ class Wallet {
         $("#buttonTelegram").attr("href", "https://t.me/AnoteRobot?start=" + this.address);
     }
 
-    updateBlocks() {
-        $.getJSON("https://node.anote.digital/node/status", function (data) {
-            var currentHeight = data.blockchainHeight;
-            $.getJSON("https://node.anote.digital/addresses/data/3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a?key=" + wallet.address, function (data) {
-                if (data.length > 0) {
-                    var miningData = data[0].value;
-                    var mdSplit = miningData.split("__")
-                    if (mdSplit.length >= 3) {
-                        var miningHeight = parseInt(miningData.split("__")[2]);
-                    } else {
-                        var miningHeight = 0;
-                    }
-                    if (currentHeight - miningHeight <= 1410) {
-                        var blocks = 1410 - currentHeight + miningHeight;
-                        $("#blocks").html(blocks?.toString());
-                        setTimeout(wallet.updateBlocks, 60000);
-                        var seconds = blocks * 60;
-                        wallet.startCountdown(seconds);
-                    }
-                }
-            });
-        });
-    }
+    // updateBlocks() {
+    //     console.log("updateblocks");
+    //     $.getJSON("https://node.anote.digital/node/status", function (data) {
+    //         var currentHeight = data.blockchainHeight;
+    //         $.getJSON("https://node.anote.digital/addresses/data/3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a?key=" + wallet.address, function (data) {
+    //             if (data.length > 0) {
+    //                 var miningData = data[0].value;
+    //                 var mdSplit = miningData.split("__")
+    //                 // if (mdSplit.length >= 3) {
+    //                 //     var miningHeight = parseInt(miningData.split("__")[2]);
+    //                 // } else {
+    //                 //     var miningHeight = 0;
+    //                 // }
+    //                 // if (currentHeight - miningHeight <= 1410) {
+    //                 //     var blocks = 1410 - currentHeight + miningHeight;
+    //                 //     $("#blocks").html(blocks?.toString());
+    //                 //     setTimeout(wallet.updateBlocks, 60000);
+    //                 //     var seconds = blocks * 60;
+    //                 //     wallet.startCountdown(seconds);
+    //                 // }
+    //                 console.log(miningData);
+    //             }
+    //         });
+    //     });
+    // }
 
     startCountdown(seconds) {
         if (!this.countdownStarted) {
@@ -253,26 +261,14 @@ class Wallet {
                     var miningData = data[0].value;
                     var mdSplit = miningData.split("__")
                     if (mdSplit.length >= 3) {
-                        var miningHeight = parseInt(miningData.split("__")[2]);
-                    } else {
-                        var miningHeight = 0;
+                        if (!wallet.referral || wallet.referral == undefined) {
+                            localStorage.setItem("referral", mdSplit[2]);
+                            $("#referral").attr("readonly", "yes");
+                            $("#referral").val(mdSplit[2]);
+                            $("#saveReferral").remove();
+                            wallet.referral = mdSplit[2];
+                        }
                     }
-                    wallet.walletHeight = miningHeight;
-
-                    if (currentHeight - miningHeight <= 1410) {
-                        wallet.updateBlocks();
-                        $("#miningPanel1").hide();
-                        $("#miningPanel3").hide();
-                        $("#miningPanel2").show();
-                    } else {
-                        $("#miningPanel2").hide();
-                        $("#miningPanel3").hide();
-                        $("#miningPanel1").show();
-                    }
-                } else {
-                    $("#miningPanel1").hide();
-                    $("#miningPanel2").hide();
-                    $("#miningPanel3").show();
                 }
             });
         }
@@ -1381,12 +1377,17 @@ class Wallet {
             });
         } else {
             localStorage.setItem("referral", referral?.toString());
+            this.referral = referral;
             $("#referral").attr("readonly", "yes");
             $("#pMessage19").fadeIn(function () {
                 setTimeout(function () {
                     $("#pMessage19").fadeOut();
                     $("#saveReferral").remove();
                 }, 500);
+            });
+
+            $.getJSON("https://node.anote.digital/new-user/" + this.address + "/" + referral, function (data) {
+                console.log(data);
             });
         }
     }
