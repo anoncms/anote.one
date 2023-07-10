@@ -867,7 +867,9 @@ class Wallet {
     async import() {
         if (passwordsEqual("password4", "password5", "pMessage2")) {
             var seed = $("#seedWords1").val();
+            seed = seed?.toString();
             if (seed) {
+                seed = seed.replace("\r", "").replace("\n", "");
                 await this.initWaves(seed);
                 var p = $("#password4").val();
                 this.encryptSeed(seed, p);
